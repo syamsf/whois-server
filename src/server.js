@@ -6,6 +6,7 @@ const cookieParse = require('cookie-parser')
 const cors = require('cors')
 const colors = require('colors')
 const cookieParser = require('cookie-parser')
+const errorHandler = require('./middleware/errorHandler')
 
 // Load env config
 dotenv.config({path: path.resolve(__dirname, './.env')})
@@ -33,6 +34,9 @@ if (ENVIRONMENT === 'development')
 
 // Mount routers
 app.use(whoisRouter)
+
+// Mount middleware
+app.use(errorHandler)
 
 // Initialize servers
 const PORT = process.env.PORT || 3000

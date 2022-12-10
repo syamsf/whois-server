@@ -1,11 +1,16 @@
 const { domainChecker } = require('../services/domainChecker')
+const ErrorResponse = require('../utils/errorResponse')
 
 exports.domainWhois = async(req, res, next) => {
-  const domainName = req.query.domain ?? ''
+  try {
+    const domainName = req.query.domain ?? ''
 
-  if (domainName === '')
-    return res.status(400).json({status: "error"})
-
-  const whoisResult = await domainChecker(domainName)
-  return res.status(200).json(whoisResult)
+    if (domainName === '')
+      throw new ErrorResponse('domain is required', 400)
+  
+    const whoisResult = await domainChecker(domainName)
+    return res.status(200).json(whoisResult)
+  } catch (error) {
+    next(error)
+  }
 }
