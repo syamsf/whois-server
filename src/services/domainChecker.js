@@ -14,7 +14,7 @@ exports.domainChecker = async(domainName) => {
   }
 
   const latestToken = await fetchLatestToken()
-  const isTokenExpired = tokenExpiredValidation(latestToken.token_expired_time)
+  const isTokenExpired = latestToken ? tokenExpiredValidation(latestToken.token_expired_time) : true
   const tokenData = isTokenExpired ? await fetchWebnicToken(webnicBaseUri, webnicAuth) : latestToken 
 
   const webnicAttributes = {
