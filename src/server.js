@@ -12,7 +12,7 @@ const errorHandler = require('./middleware/errorHandler')
 dotenv.config({path: path.resolve(__dirname, './.env')})
 
 // Current config
-const ENVIRONMENT = process.env.NODE_ENV || development
+const ENVIRONMENT = process.env.NODE_ENV || 'development'
 
 // Connect to DB
 const connectDB = require('./config/db')
