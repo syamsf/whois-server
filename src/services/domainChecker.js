@@ -26,9 +26,14 @@ exports.domainChecker = async(domainName) => {
   const whoisServer = whoisDomainRawResult.whoisServer ?? 'unknown'
   const isDomainAvailable = domainAvailabilityValidation(whoisDomainRawResult.whoisResult)
   const whoisResult = {
-    domain_name: domainName,
-    whois_server: whoisServer,
-    available: isDomainAvailable
+    code: 200,
+    data: {
+      domain: {
+        domain_name: domainName,
+        whois_server: whoisServer,
+        availability: isDomainAvailable
+      }
+    }
   }
 
   return whoisResult

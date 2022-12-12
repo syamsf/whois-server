@@ -25,8 +25,10 @@ const errorHandler = (error, req, res, next) => {
   const errorMessage = error.message || "There's some error"
 
   res.status(errorStatusCode).json({
-    status: "error",
-    message: errorMessage,
+    error: {
+      code: errorStatusCode,
+      message: errorMessage
+    }
   })
 }
 
