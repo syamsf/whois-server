@@ -1,12 +1,13 @@
 const axios = require('axios').default
 const ErrorResponse = require('../../utils/errorResponse')
 
-exports.whoisDomain = async(baseUrl, webnicAttributes) => {
+exports.whoisDomain = async(webnicAttributes) => {
+  const baseUrl = webnicAttributes.base_url ?? ''
   const webnicToken = webnicAttributes.token ?? ''
   const domain = webnicAttributes.domain ?? ''
 
-  if (webnicToken === '' || domain === '')
-    throw new ErrorResponse('webnic_token or domain is required', 400)
+  if (webnicToken === '' || domain === '' || baseUrl === '')
+    throw new ErrorResponse('webnic_token or domain or base_url is required', 400)
 
   const endpoint = `/domain/whois/universal?domainName=${domain}`;
   const fullUri = `${baseUrl}${endpoint}`
