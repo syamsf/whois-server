@@ -13,7 +13,8 @@ exports.domainWhois = async(req, res, next) => {
     if (!domainExtension.length)
       throw new ErrorResponse('domain extension is required', 400)
   
-    const whoisResult = await domainChecker(domainName.toLowerCase(), domainExtension)
+    const whoisAttributes = { premium_validation: checkPremiumDomain }
+    const whoisResult = await domainChecker(domainName.toLowerCase(), domainExtension, whoisAttributes)
     return res.status(200).json(whoisResult)
   } catch (error) {
     next(error)
