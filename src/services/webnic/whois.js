@@ -19,11 +19,10 @@ exports.whoisDomain = async(webnicAttributes) => {
     }
   })
   .catch(error => {
-    if (error.response) {
+    if (error.response)
       return error.response
-    } else {
-      return error
-    }
+    
+    return error
   })
 
   const responseCode = parseInt(response.data.code) ?? 0
