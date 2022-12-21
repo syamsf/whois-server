@@ -50,7 +50,13 @@ const removeDomainSymbol = (domainName) => {
 }
 
 const domainWhoisLogic = async(domainAttributes, webnicAuth, resellerClubAttributes) => {
-  const massDomainWhois = domainAttributes.extension.map(async(value) => {
+  const uniqueListDomainExtension = [...new Set(domainAttributes.extension)]
+
+  const massDomainWhois = uniqueListDomainExtension.map(async(value) => {
+    const isExtensionValid = !/[-!$%^&*()_+|~=`{}\[\]:";'<>?,\/\s]/.test(value)
+    if (!isExtensionValid)
+      throw new ErrorResponse(`extension is not valid '${value}'`, 400)
+      
     // Token request and validation
     const webnicBaseUri = process.env.WEBNIC_BASE_URI
     const latestToken = await fetchLatestToken()
