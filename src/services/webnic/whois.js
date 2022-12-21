@@ -18,11 +18,18 @@ exports.whoisDomain = async(webnicAttributes) => {
       Accept: 'application/json'
     }
   })
+  .catch(error => {
+    if (error.response) {
+      return error.response
+    } else {
+      return error
+    }
+  })
 
   const responseCode = parseInt(response.data.code) ?? 0
   const isWhoisRequestFailed = responseCode === 1000 ? false : true
   if (isWhoisRequestFailed)
-    throw new ErrorResponse(`whois response for ${domain}} is failed; ${response.data.error.message ?? ''}`, 500)
+    throw new ErrorResponse(`whois response for ${domain} is failed; ${response.data.error.message ?? ''}`, 500)
   
   const whoisRawResult = response.data.data
   return whoisRawResult
