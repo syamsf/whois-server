@@ -1,5 +1,5 @@
 const axios = require('axios').default
-const ErrorResponse = require('../../utils/errorResponse')
+const ErrorResponse = require('../../utils/error_response')
 
 const premiumDomainValidation = async(resellerClubAttributes, domainName) => {
   const baseUri = resellerClubAttributes.base_uri ?? ''

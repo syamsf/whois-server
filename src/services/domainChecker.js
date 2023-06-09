@@ -6,7 +6,7 @@ const {
 const { whoisDomain: doWhoisDomain } = require('../services/webnic/whois')
 const { domainAvailabilityValidation } = require('../services/webnic/whoisParser')
 const premiumDomainValidation = require('../services/resellerclub/premiumDomainValidation')
-const ErrorResponse = require('../utils/errorResponse')
+const ErrorResponse = require('../utils/error_response')
 
 exports.domainChecker = async(domainName, domainExtension, domainWhoisAttributes) => {
   const cleanDomainName = removeDomainSymbol(domainName)
@@ -35,7 +35,10 @@ exports.domainChecker = async(domainName, domainExtension, domainWhoisAttributes
   )
 
   const whoisResult = {
-    code: 200,
+    meta: {
+      code: 200,
+      success: true
+    },
     data: {
       domains: whoisDomainRawResult
     }
@@ -56,7 +59,7 @@ const domainWhoisLogic = async(domainAttributes, webnicAuth, resellerClubAttribu
     const isExtensionValid = !/[-!$%^&*()_+|~=`{}\[\]:";'<>?,\/\s]/.test(value)
     if (!isExtensionValid)
       throw new ErrorResponse(`extension is not valid '${value}'`, 400)
-      
+
     // Token request and validation
     const webnicBaseUri = process.env.WEBNIC_BASE_URI
     const latestToken = await fetchLatestToken()
@@ -65,7 +68,7 @@ const domainWhoisLogic = async(domainAttributes, webnicAuth, resellerClubAttribu
 
     // Build parameter
     const domainName = domainAttributes.domain
-    const cleanExtensionValue = value.replace('.', '')
+    const cleanExtensionValue = trimDotForFirstAndLastElement(value)
     const fullDomainName =`${domainName}.${cleanExtensionValue}`
     const webnicAttributes = {
       token: tokenData.access_token,
@@ -81,20 +84,42 @@ const domainWhoisLogic = async(domainAttributes, webnicAuth, resellerClubAttribu
     const whoisResult = {
       domain_name: fullDomainName,
       whois_server: whoisServer,
-      availability: isDomainAvailable
+      available: isDomainAvailable
     }
 
     // Domain premium validation
     const validatePremiumDomain = domainAttributes.premium_validation
     if (validatePremiumDomain) {
-      const premiumDomainStatus = await premiumDomainValidation(
-        resellerClubAttributes, 
-        fullDomainName
-      )
+      whoisResult.premium_domain = {
+        status: null,
+        message: null
+      }
 
-      whoisResult.premium_domain_status = premiumDomainStatus
+      if (isDomainId({extension: value})) {
+        const domainIdPremiumResult = domainIdPremiumChecker({extension: value, domain: domainName})
+        
+        whoisResult.premium_domain.status    = domainIdPremiumResult.premium.status 
+        whoisResult.premium_domain.message   = domainIdPremiumResult.premium.message
+        whoisResult.premium_domain.price     = domainIdPremiumResult.premium.price
+        whoisResult.premium_domain.extension = domainIdPremiumResult.premium.extension
+      } else {
+        const premiumDomainStatus = await premiumDomainValidation(
+          resellerClubAttributes, 
+          fullDomainName
+        )
+  
+        const premiumDomainStatusBool = (typeof premiumDomainStatus === "boolean")
+          ? premiumDomainStatus : false
+  
+        const premiumDomainDescription = (typeof premiumDomainStatus === "boolean")
+          ? `Premium domain checking is supported, result is ${premiumDomainStatus}`
+          : premiumDomainStatus
+  
+        whoisResult.premium_domain.status = premiumDomainStatusBool 
+        whoisResult.premium_domain.message = premiumDomainDescription 
+      }
     }
-
+      
     return whoisResult
   })
 
@@ -115,4 +140,60 @@ const promiseDomainChecker = async(domainAttributes, webnicAuth, resellerClubAtt
     })
 
   return whoisAggregateResult
+}
+
+const domainIdExtension = [
+  "id", "my.id", "web.id", "gov.id", "co.id", "sch.id", 
+  "ac.id", "or.id", "biz.id", "ponpes.id"
+]
+
+const isDomainId = ({extension}) => domainIdExtension.includes(extension)
+
+const domainIdPremiumChecker = ({extension, domain}) => {  
+  const response = {
+    premium: {
+      status: false,
+      extension: extension,
+      description: "Premium domain checking is not supported",
+      price: 0
+    }
+  }
+
+  if (!isDomainId({extension: extension}))
+    return response
+
+  const priceRule = {
+    "id": {
+      "4 char": 2500000,
+      "3 char": 15000000,
+      "2 char": 500000000 
+    },
+    "non_id": {
+      "2 char": 15000000
+    }
+  }
+
+  const totalChar = domain.length
+  response.premium.price = priceRule[extension]
+    ? priceRule[extension][`${totalChar} char`] ?? 0
+    : priceRule['non_id'][`${totalChar} char`] ?? 0
+
+  response.premium.status = (response.premium.price) ? true : false
+  response.premium.message = "Premium domain checking is supported"
+
+  return response
+}
+
+const trimDotForFirstAndLastElement = (word) => {
+  // Remove first character if dot is detected
+  if (word.charAt(0) === '.') {
+    word = word.substring(1);
+  }
+
+  // Remove last character if dot is detected
+  if (word.charAt(word.length - 1) === '.') {
+    word = word.substring(0, word.length - 1);
+  }
+
+  return word
 }

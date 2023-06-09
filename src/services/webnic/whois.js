@@ -1,5 +1,5 @@
 const axios = require('axios').default
-const ErrorResponse = require('../../utils/errorResponse')
+const ErrorResponse = require('../../utils/error_response')
 
 exports.whoisDomain = async(webnicAttributes) => {
   const baseUrl = webnicAttributes.base_url ?? ''

@@ -1,6 +1,6 @@
 const axios = require('axios').default
 const WebnicTokenModel = require('../../models/WebnicToken')
-const ErrorResponse = require('../../utils/errorResponse')
+const ErrorResponse = require('../../utils/error_response')
 
 exports.fetchWebnicToken = async(baseUrl, webnicAuth) => {
   const endpoint = '/auth/realms/webnic/protocol/openid-connect/token';

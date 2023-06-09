@@ -1,0 +1,12 @@
+### Whois Domain
+POST http://localhost:3000/api/v1/whois
+Content-Type: application/json
+Accept: application/json
+
+{
+  "domain": "",
+  "extension": [
+    "id", "site", "my.id"
+  ],
+  "validate_premium_domain": true
+}
