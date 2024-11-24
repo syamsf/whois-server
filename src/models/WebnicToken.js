@@ -1,5 +1,7 @@
 const mongoose = require('mongoose')
 
+const collection = process.env.COLLECTION
+
 const WebnicTokenSchema = new mongoose.Schema({
   access_token: {
     type: String,
@@ -22,4 +24,4 @@ const WebnicTokenSchema = new mongoose.Schema({
 },
 { timestamps: true })
 
-module.exports = mongoose.model('webnic_token', WebnicTokenSchema, 'webnic_token')
+module.exports = mongoose.model('webnic_token', WebnicTokenSchema, collection)

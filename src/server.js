@@ -15,5 +15,10 @@ const server = app.listen(
 
 // Handle unhandled promise rejection
 process.on('unhandledRejection', (err, promise) => {
-  console.log(`Error: ${err.message}`.red)
+  console.log(`Unhandled Rejection Error: ${err.message}`.red)
+})
+
+process.on('SIGINT', () => {
+    console.info("Interrupted")
+    process.exit(0)
 })

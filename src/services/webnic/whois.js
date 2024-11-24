@@ -11,7 +11,7 @@ exports.whoisDomain = async(webnicAttributes) => {
 
   const endpoint = `/domain/whois/universal?domainName=${domain}`;
   const fullUri = `${baseUrl}${endpoint}`
-  
+
   const response = await axios.get(fullUri, {
     headers: {
       Authorization: `Bearer ${webnicToken}`,
@@ -21,7 +21,7 @@ exports.whoisDomain = async(webnicAttributes) => {
   .catch(error => {
     if (error.response)
       return error.response
-    
+
     return error
   })
 
@@ -29,7 +29,6 @@ exports.whoisDomain = async(webnicAttributes) => {
   const isWhoisRequestFailed = responseCode === 1000 ? false : true
   if (isWhoisRequestFailed)
     throw new ErrorResponse(`whois response for ${domain} is failed; ${response.data.error.message ?? ''}`, 500)
-  
-  const whoisRawResult = response.data.data
-  return whoisRawResult
+
+  return response.data.data
 }

@@ -1,8 +1,11 @@
 const errorHandler = (error, req, res, next) => {
   // For development only
-  const environment = process.env.NODE_ENV || 'development' 
-  if (environment === 'development')
+  const isDebug = process.env.DEBUG || "false"
+  if (isDebug === "false") {
+    console.log(error.message.red)
+  } else {
     console.log(error.stack.red)
+  }
 
   let isErrorFromWebRequest = (error.response) ?? false
   isErrorFromWebRequest = (isErrorFromWebRequest) ? true : false

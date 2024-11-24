@@ -7,7 +7,10 @@ module.exports = {
     '^@helpers/(.*)$': '<rootDir>/src/helpers/$1',
     '^@controllers/(.*)$': '<rootDir>/src/controllers/$1',
     '^@routes/(.*)$': '<rootDir>/src/routes/$1',
+    '^@data/(.*)$': '<rootDir>/src/data/$1',
     '^@utils/(.*)$': '<rootDir>/src/utils/$1',
+    '^@repositories/(.*)$': '<rootDir>/src/repositories/$1',
+    '^@libs/(.*)$': '<rootDir>/src/libs/$1',
     '^@cron/(.*)$': '<rootDir>/src/cron/$1',
   },
 };

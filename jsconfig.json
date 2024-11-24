@@ -11,7 +11,10 @@
       "@routes/*": ["./src/routes/*"],
       "@services/*": ["./src/services/*"],
       "@utils/*": ["./src/utils/*"],
+      "@data/*": ["./src/data/*"],
+      "@repositories/*": ["./src/repositories/*"],
       "@views/*": ["./src/views/*"],
+      "@libs/*": ["./src/libs/*"],
       "@jobs/*": ["./src/jobs/*"],
       "@cron/*": ["./src/cron/*"],
       "@root/*": ["."]
